@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/total_bg"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/setting_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_gravity="center"
+        android:background="@color/colorPrimaryPressed"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="网络设置"
+            android:textColor="@color/white" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/login_police"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/login_text_background"
+        android:clickable="true"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingBottom="5dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="5dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="I  P"
+            android:textSize="14dp" />
+
+        <LinearLayout
+            android:layout_width="1dp"
+            android:layout_height="25dp"
+            android:layout_marginLeft="5dp"
+            android:background="#A9A9A9"></LinearLayout>
+
+        <EditText
+            android:id="@+id/setting_ip"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:background="#ffffff"
+            android:editable="false"
+            android:hint="请输入IP" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/login_text_background"
+        android:clickable="true"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingBottom="5dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="5dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="端口"
+            android:textSize="14dp" />
+
+        <LinearLayout
+            android:layout_width="1dp"
+            android:layout_height="25dp"
+            android:layout_marginLeft="5dp"
+            android:background="#A9A9A9"></LinearLayout>
+
+        <EditText
+            android:id="@+id/seting_port"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:background="#ffffff"
+            android:editable="false"
+            android:hint="请输入端口" />
+    </LinearLayout>
+
+
+    <Button
+        android:id="@+id/setting_http_submit"
+        style="@style/ButtonStyle"
+        android:layout_marginTop="10dp"
+        android:text="提交" />
+
+    <Button
+        android:id="@+id/setting_http_cancel"
+        style="@style/ButtonStyle"
+        android:layout_marginTop="10dp"
+        android:text="返回" />
+</LinearLayout>
