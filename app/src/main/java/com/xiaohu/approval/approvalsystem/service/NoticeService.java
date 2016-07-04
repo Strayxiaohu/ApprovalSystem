@@ -18,6 +18,10 @@ import com.xiaohu.approval.approvalsystem.activity.MainActivity;
 public class NoticeService extends Service {
     private Handler myHandler = new Handler();
 
+    /**
+     * @param intent
+     * @return
+     */
     @Override
     public IBinder onBind(Intent intent) {
         return null;
@@ -50,10 +54,12 @@ public class NoticeService extends Service {
         };
         // myHandler.postDelayed(myTasks,1000);
         super.onCreate();
-
     }
 
 
+    /**
+     *
+     */
     @Override
     public void onDestroy() {
         //当服务结束，删除mtasks运行线程
@@ -63,8 +69,6 @@ public class NoticeService extends Service {
 
     /**
      * 添加顶部通知
-     *
-     * @author liuzhao
      */
     public void AddNotification() {
 
@@ -112,12 +116,9 @@ public class NoticeService extends Service {
          *      例如之前提到的，我们需要在每次更新之后更新Intent中的Extras数据，
          *      达到在不同时机传递给MainActivity不同的参数，实现不同的效果。
          *********************/
-
         PendingIntent pi = PendingIntent.getActivity(this, 0, it, PendingIntent.FLAG_UPDATE_CURRENT);
-
         //设置事件信息，显示在拉开的里面
-        n.setLatestEventInfo(NoticeService.this, "我的软件", "我的软件正在运行……", pi);
-
+        n.setLatestEventInfo(NoticeService.this, "掌上审批系统", "未审批2条", pi);
         //发出通知
         //nm.cancel(1012);
         nm.notify(1012, n);
