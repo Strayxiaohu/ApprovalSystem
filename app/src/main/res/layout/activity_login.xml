@@ -19,7 +19,7 @@
             android:id="@+id/login_logo"
             android:layout_width="130dp"
             android:layout_height="130dp"
-            android:src="@mipmap/ic_launcher" />
+            android:src="@mipmap/login_logo" />
 
         <LinearLayout
             android:id="@+id/login_text"
