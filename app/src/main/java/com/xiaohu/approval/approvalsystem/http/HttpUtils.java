@@ -22,7 +22,7 @@ import java.util.List;
  * Created by Administrator on 2016/7/6.
  */
 public class HttpUtils {
-    public void HttpGet(final Context context, final Handler myHandler, final String url) {
+    public void HttpGet(final Context context, final Handler myHandler, final String url, final boolean isTrue) {
 
         new Thread(new Runnable() {
             @Override
@@ -49,17 +49,19 @@ public class HttpUtils {
                         HttpEntity entity = httpResponse.getEntity();
                         String response = EntityUtils.toString(entity, "utf-8");
                         //session
+                        if (isTrue) {
+                            CookieStore mCookieStore = ((AbstractHttpClient) httpClient).getCookieStore();
+                            List<Cookie> cookies = mCookieStore.getCookies();
+                            for (int i = 0; i < cookies.size(); i++) {
+                                if (cookies.get(i).getName().equals("ASP.NET_SessionId")) {
+                                    System.out.println("sss---写入session");
+                                    String sid = cookies.get(i).getValue();
+                                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                                    editor.putString("ASP.SessionId", sid);
+                                    editor.commit();
 
-                        CookieStore mCookieStore = ((AbstractHttpClient) httpClient).getCookieStore();
-                        List<Cookie> cookies = mCookieStore.getCookies();
-                        for (int i = 0; i < cookies.size(); i++) {
-                            if (cookies.get(i).getName().equals("ASP.NET_SessionId")) {
-                                String sid = cookies.get(i).getValue();
-                                SharedPreferences.Editor editor = sharedPreferences.edit();
-                                editor.putString("ASP.SessionId", sid);
-                                editor.commit();
-
-                                break;
+                                    break;
+                                }
                             }
                         }
 

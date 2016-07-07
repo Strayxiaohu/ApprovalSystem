@@ -43,6 +43,9 @@ public class MainActivity extends Activity {
     }
 
     private void initEvent() {
+        intent = new Intent(MainActivity.this, NoticeService.class);
+            System.out.println("  開啟  service...");
+            startService(intent);
         WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);
         settings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
@@ -55,6 +58,7 @@ public class MainActivity extends Activity {
             @Override
             public void onProgressChanged(WebView view, int newProgress) {
                 if (newProgress == 100) {
+                    System.out.println("---------------------------------------ssss");
                     //网页加载完成
                     textMes.setVisibility(View.GONE);
                     webView.setVisibility(View.VISIBLE);
@@ -81,6 +85,7 @@ public class MainActivity extends Activity {
                 SharedPreferences.Editor editor=sharedPreferences.edit();
                 editor.putString("UserName","");
                 editor.putString("UserPasswrod","");
+                editor.putString("ASP.SessionId","");
                 editor.commit();
                 Intent intent=new Intent(MainActivity.this,LoginActivity.class);
                 startActivity(intent);
@@ -93,9 +98,12 @@ public class MainActivity extends Activity {
 
     private void synCookies(String url) {
         String sessionid = sharedPreferences.getString("ASP.SessionId", "");
-        StringBuilder sbCookie = new StringBuilder();
-        sbCookie.append(String.format("ASP.NET_SessionId=%s", sessionid));
 
+        StringBuilder sbCookie = new StringBuilder();
+        System.out.println(sessionid+":::0000sssssss");
+        sbCookie.append(String.format("ASP.NET_SessionId=%s", sessionid));
+        sbCookie.append(String.format(";domain=%s", "192.168.1.113"));
+        sbCookie.append(String.format(";path=%s", "/"));
         CookieSyncManager.createInstance(this);
         CookieManager cookieManager = CookieManager.getInstance();
         cookieManager.setAcceptCookie(true);
@@ -107,10 +115,11 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onPause() {
-        if(!sharedPreferences.getString("UserName","").equals("")) {
-            intent = new Intent(MainActivity.this, NoticeService.class);
-            startService(intent);
-        }
+//        if(!sharedPreferences.getString("UserName","").equals("")) {
+//            intent = new Intent(MainActivity.this, NoticeService.class);
+//            System.out.println("  開啟  service...");
+//            startService(intent);
+//        }
         super.onPause();
     }
 
@@ -118,9 +127,10 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onResume() {
-        if (isServiceRunning("com.xiaohu.approval.approvalsystem.service")) {
-            this.stopService(intent);
-        }
+//        if (isServiceRunning("com.xiaohu.approval.approvalsystem.service")) {
+//            System.out.println("退出service...");
+//            this.stopService(intent);
+//        }
         super.onResume();
     }
 
@@ -147,11 +157,15 @@ public class MainActivity extends Activity {
                 }
             }, 2000);
         } else {//退出程序
-            if (isServiceRunning("com.xiaohu.approval.approvalsystem.service")) {
-                this.stopService(intent);
-            }
+//            if (isServiceRunning("com.xiaohu.approval.approvalsystem.service")) {
+                System.out.println("退出service...");
+              //  this.stopService(intent);
+          //  }
+//            SharedPreferences.Editor editor=sharedPreferences.edit();
+//            editor.putString("ASP.SessionId","");
+//            editor.commit();
             this.finish();
-            System.exit(0);
+           // System.exit(0);
         }
     }
 

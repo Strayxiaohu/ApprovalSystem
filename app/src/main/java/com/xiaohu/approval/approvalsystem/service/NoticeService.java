@@ -97,7 +97,7 @@ private String httpResult="0";
         String ip = sharedPreferences.getString("IP", "");
         String port=sharedPreferences.getString("PORT","");
         String url = "http://"+ip+":"+port+"/Mobile/GetApprove.ashx";
-        httpUtils.HttpGet(this, handler, url);
+        httpUtils.HttpGet(this, handler, url,false);
     }
 
     /**
@@ -142,7 +142,13 @@ private String httpResult="0";
             n.flags |= Notification.FLAG_AUTO_CANCEL; //自动终止
 
             //实例化Intent
-            Intent it = new Intent(this, MainActivity.class);
+            Intent it = new Intent(Intent.ACTION_MAIN);
+            it.addCategory(Intent.CATEGORY_LAUNCHER);
+            it.setClass(this,MainActivity.class);
+            it.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+           // n.flags=Notification.FLAG_ONGOING_EVENT;
+
+
             //it.putExtra(KEY_COUNT, count);
             /*********************
              *获得PendingIntent
@@ -165,12 +171,12 @@ private String httpResult="0";
              *      例如之前提到的，我们需要在每次更新之后更新Intent中的Extras数据，
              *      达到在不同时机传递给MainActivity不同的参数，实现不同的效果。
              *********************/
-            PendingIntent pi = PendingIntent.getActivity(this, 0, it, PendingIntent.FLAG_UPDATE_CURRENT);
+            PendingIntent pi = PendingIntent.getActivity(this, 0, it, 0);
             //设置事件信息，显示在拉开的里面
             n.setLatestEventInfo(NoticeService.this, "掌上审批系统",httpResult, pi);
             //发出通知
             //nm.cancel(1012);
-            nm.notify(1, n);
+            nm.notify(R.mipmap.mylogo, n);
         }
     }
 }

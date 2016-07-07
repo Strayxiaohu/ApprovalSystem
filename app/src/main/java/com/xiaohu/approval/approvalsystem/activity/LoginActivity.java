@@ -85,7 +85,7 @@ public class LoginActivity extends Activity {
                 } else {
                     HttpUtils httpUtils = new HttpUtils();
                     String url = "http://" + ip + ":" + port + "/Mobile/login.ashx?username=" + edituser.getText().toString().trim() + "&password=" + editpsw.getText().toString().trim();
-                    httpUtils.HttpGet(LoginActivity.this, myHandler, url);
+                    httpUtils.HttpGet(LoginActivity.this, myHandler, url,true);
                 }
             }
         });
