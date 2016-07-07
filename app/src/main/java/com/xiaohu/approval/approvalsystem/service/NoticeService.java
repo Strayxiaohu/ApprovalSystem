@@ -5,7 +5,9 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
@@ -14,19 +16,21 @@ import android.os.PowerManager;
 import com.xiaohu.approval.approvalsystem.R;
 import com.xiaohu.approval.approvalsystem.activity.MainActivity;
 import com.xiaohu.approval.approvalsystem.activity.NoticeActivity;
+import com.xiaohu.approval.approvalsystem.http.HttpUtils;
 
 /**
  * Created by Administrator on 2016/7/2.
  */
 public class NoticeService extends Service {
     private Handler myHandler = new Handler();
-
+private String httpResult="0";
     /**
      * @param intent
      * @return
      */
     @Override
     public IBinder onBind(Intent intent) {
+
         return null;
     }
 
@@ -38,7 +42,7 @@ public class NoticeService extends Service {
             msg.obj = 0;
             myHandler.sendMessage(msg);
             System.out.println("```````````2");
-            myHandler.postDelayed(myTasks, 5000);
+            myHandler.postDelayed(myTasks, 60000);
         }
     };
 
@@ -50,15 +54,51 @@ public class NoticeService extends Service {
             @Override
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
-                System.out.println("notice  handler service");
                 //访问服务器
-                AddNotification();
+                getWebGetNum();
             }
         };
         // myHandler.postDelayed(myTasks,1000);
         super.onCreate();
     }
 
+    private void getWebGetNum() {
+        HttpUtils httpUtils = new HttpUtils();
+        Handler handler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                System.out.println(msg.obj.toString() + "-----");
+                //显示通知
+
+                String strNum = msg.obj.toString();
+                if (strNum.contains("数量")) {
+                    if(!strNum.substring(2).equals("0")) {
+                        strNum="未审批-" + strNum.substring(2)+"条";
+                        if (strNum.equals(httpResult)) {
+                            //不重新提醒
+
+                        } else {
+                            httpResult = strNum;
+                            AddNotification();
+                        }
+                    }
+                } else {
+                    if (strNum.equals(httpResult)) {
+                        //不重新提醒
+                    } else {
+                        httpResult=strNum;
+                        AddNotification();
+                    }
+                }
+            }
+        };
+        SharedPreferences sharedPreferences = getSharedPreferences("APPROVAL", Context.MODE_PRIVATE);
+        String ip = sharedPreferences.getString("IP", "");
+        String port=sharedPreferences.getString("PORT","");
+        String url = "http://"+ip+":"+port+"/Mobile/GetApprove.ashx";
+        httpUtils.HttpGet(this, handler, url);
+    }
 
     /**
      *
@@ -74,16 +114,13 @@ public class NoticeService extends Service {
      * 添加顶部通知
      */
     public void AddNotification() {
-
         PowerManager pm = (PowerManager) getSystemService(this.POWER_SERVICE);
         KeyguardManager mKeyguardManager = (KeyguardManager) getSystemService(this.KEYGUARD_SERVICE);
         if (!pm.isScreenOn()) {
-            System.out.println("..............34343343");
             Intent intent = new Intent(this, NoticeActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
         } else {
-            System.out.println("..............---------------");
             //添加通知到顶部任务栏
             //获得NotificationManager实例
             String service = NOTIFICATION_SERVICE;
@@ -91,7 +128,7 @@ public class NoticeService extends Service {
             //实例化Notification
             Notification n = new Notification();
             //设置显示图标
-            int icon = R.mipmap.ic_launcher;
+            int icon = R.mipmap.mylogo;
             //设置提示信息
             String tickerText = "我的程序";
             //显示时间
@@ -130,7 +167,7 @@ public class NoticeService extends Service {
              *********************/
             PendingIntent pi = PendingIntent.getActivity(this, 0, it, PendingIntent.FLAG_UPDATE_CURRENT);
             //设置事件信息，显示在拉开的里面
-            n.setLatestEventInfo(NoticeService.this, "掌上审批系统", "未审批2条", pi);
+            n.setLatestEventInfo(NoticeService.this, "掌上审批系统",httpResult, pi);
             //发出通知
             //nm.cancel(1012);
             nm.notify(1, n);

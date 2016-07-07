@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.xiaohu.approval.approvalsystem.R;
 
@@ -36,16 +37,23 @@ public class SettingIpActivity extends Activity {
         cancle = (Button) findViewById(R.id.setting_http_cancel);
         editTextPort.setText(sharedPreferences.getString("PORT", ""));
         editTextIp.setText(sharedPreferences.getString("IP", ""));
+
     }
 
     private void initEvent() {
         btnCommint.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                editor.putString("IP", editTextIp.getText().toString().trim());
-                editor.putString("PORT", editTextPort.getText().toString().trim());
-                editor.commit();
+                String ip = editTextIp.getText().toString().trim();
+                String port = editTextPort.getText().toString().trim();
+                if (ip.equals("") || port.equals("")) {
+                    Toast.makeText(SettingIpActivity.this, "请输入正确的IP和端口", Toast.LENGTH_SHORT).show();
+                } else {
+                    editor.putString("IP", ip);
+                    editor.putString("PORT", port);
+                    editor.commit();
+                    finish();
+                }
             }
         });
         cancle.setOnClickListener(new View.OnClickListener() {
