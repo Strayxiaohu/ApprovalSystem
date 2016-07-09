@@ -31,10 +31,11 @@ public class NoticeActivity extends Activity {
         win.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
                 | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
         setContentView(R.layout.notice_activity);
+        String num=getIntent().getStringExtra("HttpNum");
         relativeLayout= (RelativeLayout) findViewById(R.id.notice_relative_layout);
         textNum= (TextView) findViewById(R.id.notice_mes_num);
 
-        textNum.setText("");
+        textNum.setText(num);
         relativeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

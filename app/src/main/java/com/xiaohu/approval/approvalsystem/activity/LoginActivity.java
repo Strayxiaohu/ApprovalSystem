@@ -9,12 +9,15 @@ import android.os.Handler;
 import android.os.Message;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.xiaohu.approval.approvalsystem.R;
 import com.xiaohu.approval.approvalsystem.http.HttpUtils;
+import com.xiaohu.approval.approvalsystem.service.NoticeService;
 
 /**
  * Created by Administrator on 2016/7/2.
@@ -24,6 +27,7 @@ public class LoginActivity extends Activity {
     Button btnSave;
     ImageView ivSetting;
     SharedPreferences sharedPreferences;
+    CheckBox checkBox;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,24 +45,58 @@ public class LoginActivity extends Activity {
         edituser = (EditText) findViewById(R.id.login_username);
         editpsw = (EditText) findViewById(R.id.login_psw_edit);
         btnSave = (Button) findViewById(R.id.login_button);
+        checkBox = (CheckBox) findViewById(R.id.login_checkbox);
+        checkBox.setChecked(true);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("PASSWORD", "true");
+        editor.commit();
         edituser.setText(uname);
         editpsw.setText(upsw);
     }
 
     private void initEvent() {
+        //绑定监听器
+//        checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//
+//            @Override
+//            public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
+//                // TODO Auto-generated method stub
+//               // Toast.makeText(LoginActivity.this,
+//                //        arg1?"选中了":"取消了选中"    , Toast.LENGTH_LONG).show();
+//                SharedPreferences.Editor editor=sharedPreferences.edit();
+//                if(checkBox.isChecked()){
+//                    checkBox.setChecked(false);
+//                    editor.putString("PASSWORD","false");
+//                }else{
+//                    checkBox.setChecked(true);
+//                    editor.putString("PASSWORD","true");
+//                }
+//
+//                editor.commit();
+//            }
+//        });
         final Handler myHandler = new Handler() {
             @Override
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
                 if (msg.obj.toString().equals("")) {
-
                     SharedPreferences.Editor editor = sharedPreferences.edit();
-                    editor.putString("UserName",edituser.getText().toString().trim());
-                    editor.putString("UserPasswrod",editpsw.getText().toString().trim());
+                    editor.putString("UserName", edituser.getText().toString().trim());
+                 //   if (checkBox.isChecked()) {
+                        editor.putString("UserPasswrod", editpsw.getText().toString().trim());
+//                    } else {
+//                        editor.putString("UserPasswrod", "");
+//                    }
                     editor.commit();
-                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                    startActivity(intent);
-                    finish();
+//                    Intent intents = new Intent(LoginActivity.this, MainActivity.class);
+//                    startActivity(intents);
+//                    finish();
+                    Intent intent = new Intent(LoginActivity.this, NoticeService.class);
+                    System.out.println("  開啟  service...");
+                    startService(intent);
+                    btnSave.setText("注  销");
+                    editpsw.setEnabled(false);
+                    edituser.setEnabled(false);
                 } else {
                     Toast.makeText(LoginActivity.this, msg.obj.toString(), Toast.LENGTH_SHORT).show();
                 }
@@ -75,17 +113,29 @@ public class LoginActivity extends Activity {
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 String port = sharedPreferences.getString("PORT", "");
                 String ip = sharedPreferences.getString("IP", "");
-                if (port.equals("") || ip.equals("")) {
-                    Toast.makeText(LoginActivity.this, "请设置IP和端口！", Toast.LENGTH_SHORT).show();
-                } else if (edituser.getText().toString().trim().equals("") || editpsw.getText().toString().trim().equals("")) {
-                    Toast.makeText(LoginActivity.this, "请输入用户名和密码！", Toast.LENGTH_SHORT).show();
+                if (btnSave.getText().equals("保   存")) {
+
+
+                    if (port.equals("") || ip.equals("")) {
+                        Toast.makeText(LoginActivity.this, "请设置IP和端口！", Toast.LENGTH_SHORT).show();
+                    } else if (edituser.getText().toString().trim().equals("") || editpsw.getText().toString().trim().equals("")) {
+                        Toast.makeText(LoginActivity.this, "请输入用户名和密码！", Toast.LENGTH_SHORT).show();
+                    } else {
+                        HttpUtils httpUtils = new HttpUtils();
+                        String url = "http://" + ip + ":" + port + "/Mobile/login.ashx?username=" + edituser.getText().toString().trim() + "&password=" + editpsw.getText().toString().trim();
+                        httpUtils.HttpGet(LoginActivity.this, myHandler, url, true);
+                    }
                 } else {
-                    HttpUtils httpUtils = new HttpUtils();
-                    String url = "http://" + ip + ":" + port + "/Mobile/login.ashx?username=" + edituser.getText().toString().trim() + "&password=" + editpsw.getText().toString().trim();
-                    httpUtils.HttpGet(LoginActivity.this, myHandler, url,true);
+                    editpsw.setEnabled(true);
+                    edituser.setEnabled(true);
+                    editpsw.setText("");
+                    edituser.setText("");
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putString("UserName", "");
+                    editor.putString("UserPasswrod", "");
+                    editor.commit();
                 }
             }
         });

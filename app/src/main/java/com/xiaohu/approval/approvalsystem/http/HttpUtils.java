@@ -34,13 +34,7 @@ public class HttpUtils {
                 HttpGet httpGet = new HttpGet(url);
                 SharedPreferences sharedPreferences = context.getSharedPreferences("APPROVAL", Context.MODE_PRIVATE);
                 String sessionid = sharedPreferences.getString("ASP.SessionId", "");
-                if (!sessionid.equals("")) {
-                    httpGet.setHeader("Cookie", "ASP.NET_SessionId=" + sessionid);
-                }
-
                 try {
-
-
                     //第三步：执行请求，获取服务器发还的响应的对象
                     HttpResponse httpResponse = httpClient.execute(httpGet);
                     //第四步：检查相应的状态是否正常：检查状态码的值是200表示正常
@@ -49,23 +43,20 @@ public class HttpUtils {
                         HttpEntity entity = httpResponse.getEntity();
                         String response = EntityUtils.toString(entity, "utf-8");
                         //session
-                        if (isTrue) {
-                            CookieStore mCookieStore = ((AbstractHttpClient) httpClient).getCookieStore();
-                            List<Cookie> cookies = mCookieStore.getCookies();
-                            for (int i = 0; i < cookies.size(); i++) {
-                                if (cookies.get(i).getName().equals("ASP.NET_SessionId")) {
-                                    System.out.println("sss---写入session");
-                                    String sid = cookies.get(i).getValue();
-                                    SharedPreferences.Editor editor = sharedPreferences.edit();
-                                    editor.putString("ASP.SessionId", sid);
-                                    editor.commit();
-
-                                    break;
-                                }
-                            }
-                        }
-
-
+//                        if (isTrue) {
+//                            CookieStore mCookieStore = ((AbstractHttpClient) httpClient).getCookieStore();
+//                            List<Cookie> cookies = mCookieStore.getCookies();
+//                            for (int i = 0; i < cookies.size(); i++) {
+//                                if (cookies.get(i).getName().equals("ASP.NET_SessionId")) {
+//                                    System.out.println("sss---写入session");
+//                                    String sid = cookies.get(i).getValue();
+//                                    SharedPreferences.Editor editor = sharedPreferences.edit();
+//                                    editor.putString("ASP.SessionId", sid);
+//                                    editor.commit();
+//                                    break;
+//                                }
+//                            }
+//                        }
                         //将entity当中的数据转换为字符串
                         //在子线程中将Message对象发出去
                         Message message = new Message();
@@ -78,11 +69,9 @@ public class HttpUtils {
                         message.obj = "";
                         myHandler.sendMessage(message);
                     }
-
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
-
             }
         }).start();
     }

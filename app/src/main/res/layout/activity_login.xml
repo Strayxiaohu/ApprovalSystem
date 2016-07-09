@@ -132,7 +132,8 @@
                 android:layout_width="130dp"
                 android:layout_height="30dp"
                 android:text="记住密码"
-                android:textColor="#ffffff" />
+                android:textColor="#ffffff"
+                android:visibility="gone"/>
         </LinearLayout>
 
         <Button
@@ -141,7 +142,7 @@
             android:layout_height="35dp"
             android:layout_marginTop="20dp"
             android:background="@drawable/login_button_backchange"
-            android:text="登  录"
+            android:text="保   存"
             android:textColor="#ffffff" />
 
         <ImageView

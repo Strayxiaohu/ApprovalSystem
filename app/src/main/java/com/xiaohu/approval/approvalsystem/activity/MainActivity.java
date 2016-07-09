@@ -34,7 +34,9 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+//        intent = new Intent(MainActivity.this, NoticeService.class);
+//        System.out.println("  開啟  service...");
+//        stopService(intent);
         sharedPreferences = getSharedPreferences("APPROVAL", Context.MODE_PRIVATE);
         webView = (WebView) findViewById(R.id.webview);
         textMes = (TextView) findViewById(R.id.main_mes);
@@ -43,14 +45,14 @@ public class MainActivity extends Activity {
     }
 
     private void initEvent() {
-        intent = new Intent(MainActivity.this, NoticeService.class);
-            System.out.println("  開啟  service...");
-            startService(intent);
+
         WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);
         settings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
         String port = sharedPreferences.getString("PORT", "");
         String ip = sharedPreferences.getString("IP", "");
+//        String uname=sharedPreferences.getString("UserName","");
+//        String upsw=sharedPreferences.getString("UserPasswrod","");
         String url = "http://" + ip + ":" + port + "/Mobile/SearchApprove.aspx";
         synCookies(url);
         webView.loadUrl(url);
@@ -115,11 +117,11 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onPause() {
-//        if(!sharedPreferences.getString("UserName","").equals("")) {
-//            intent = new Intent(MainActivity.this, NoticeService.class);
-//            System.out.println("  開啟  service...");
-//            startService(intent);
-//        }
+        finish();
+        if(!sharedPreferences.getString("UserName","").equals("")) {
+            intent = new Intent(MainActivity.this, NoticeService.class);
+            startService(intent);
+        }
         super.onPause();
     }
 
@@ -127,10 +129,10 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onResume() {
-//        if (isServiceRunning("com.xiaohu.approval.approvalsystem.service")) {
-//            System.out.println("退出service...");
-//            this.stopService(intent);
-//        }
+       // initEvent();
+        if (isServiceRunning("com.xiaohu.approval.approvalsystem.service")) {
+            this.stopService(intent);
+        }
         super.onResume();
     }
 
@@ -140,7 +142,6 @@ public class MainActivity extends Activity {
             webView.goBack();
             return true;
         }
-
         return super.onKeyDown(keyCode, event);
     }
 
@@ -158,7 +159,7 @@ public class MainActivity extends Activity {
             }, 2000);
         } else {//退出程序
 //            if (isServiceRunning("com.xiaohu.approval.approvalsystem.service")) {
-                System.out.println("退出service...");
+              //  System.out.println("退出service...");
               //  this.stopService(intent);
           //  }
 //            SharedPreferences.Editor editor=sharedPreferences.edit();

@@ -8,6 +8,7 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
@@ -23,7 +24,8 @@ import com.xiaohu.approval.approvalsystem.http.HttpUtils;
  */
 public class NoticeService extends Service {
     private Handler myHandler = new Handler();
-private String httpResult="0";
+    private String httpResult = "0";
+
     /**
      * @param intent
      * @return
@@ -72,32 +74,41 @@ private String httpResult="0";
                 //显示通知
 
                 String strNum = msg.obj.toString();
-                if (strNum.contains("数量")) {
-                    if(!strNum.substring(2).equals("0")) {
-                        strNum="未审批-" + strNum.substring(2)+"条";
-                        if (strNum.equals(httpResult)) {
-                            //不重新提醒
+                //测试
+                httpResult = "未审批-" + strNum.substring(2) + "条";
 
-                        } else {
-                            httpResult = strNum;
-                            AddNotification();
-                        }
-                    }
-                } else {
-                    if (strNum.equals(httpResult)) {
-                        //不重新提醒
-                    } else {
-                        httpResult=strNum;
-                        AddNotification();
-                    }
-                }
+                AddNotification();
+                //结束
+//                if (strNum.contains("数量")) {
+//                    if(!strNum.substring(2).equals("0")) {
+//                        strNum="未审批-" + strNum.substring(2)+"条";
+//                        if (strNum.equals(httpResult)) {
+//                            //不重新提醒
+//
+//                        } else {
+//                            httpResult = strNum;
+//                            AddNotification();
+//                        }
+//                    }
+//                } else {
+//                    if (strNum.equals(httpResult)) {
+//                        //不重新提醒
+//                    } else {
+//                        httpResult=strNum;
+//                        AddNotification();
+//                    }
+//                }
             }
         };
         SharedPreferences sharedPreferences = getSharedPreferences("APPROVAL", Context.MODE_PRIVATE);
         String ip = sharedPreferences.getString("IP", "");
-        String port=sharedPreferences.getString("PORT","");
-        String url = "http://"+ip+":"+port+"/Mobile/GetApprove.ashx";
-        httpUtils.HttpGet(this, handler, url,false);
+        String port = sharedPreferences.getString("PORT", "");
+        String uname = sharedPreferences.getString("UserName", "");
+        String upsw = sharedPreferences.getString("UserPasswrod", "");
+        if (!uname.equals("")) {
+            String url = "http://" + ip + ":" + port + "/Mobile/GetApprove.ashx?username=" + uname +"&password=" + upsw;
+            httpUtils.HttpGet(this, handler, url, true);
+        }
     }
 
     /**
@@ -119,8 +130,9 @@ private String httpResult="0";
         if (!pm.isScreenOn()) {
             Intent intent = new Intent(this, NoticeActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.putExtra("HttpNum", httpResult);
             startActivity(intent);
-        } else {
+        }
             //添加通知到顶部任务栏
             //获得NotificationManager实例
             String service = NOTIFICATION_SERVICE;
@@ -142,11 +154,24 @@ private String httpResult="0";
             n.flags |= Notification.FLAG_AUTO_CANCEL; //自动终止
 
             //实例化Intent
-            Intent it = new Intent(Intent.ACTION_MAIN);
-            it.addCategory(Intent.CATEGORY_LAUNCHER);
-            it.setClass(this,MainActivity.class);
-            it.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
-           // n.flags=Notification.FLAG_ONGOING_EVENT;
+//            Intent it = new Intent(Intent.ACTION_MAIN);
+//            it.addCategory(Intent.CATEGORY_LAUNCHER);
+//            it.setClass(this, MainActivity.class);
+//            it.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+
+            SharedPreferences sharedPreferences = getSharedPreferences("APPROVAL", Context.MODE_PRIVATE);
+            String port = sharedPreferences.getString("PORT", "");
+            String ip = sharedPreferences.getString("IP", "");
+            String uname = sharedPreferences.getString("UserName", "");
+            String upsw = sharedPreferences.getString("UserPasswrod", "");
+            String url = "http://" + ip + ":" + port + "/Mobile/SearchApprove.aspx?username=" + uname +"&password=" + upsw;
+            Uri uri = Uri.parse(url);
+            Intent it = new Intent(Intent.ACTION_VIEW, uri);
+//
+//            String sessionid = sharedPreferences.getString("ASP.SessionId", "");
+//            it.putExtra("ASP.NET_SessionId=", sessionid);
+            // startActivity(it);
+            // n.flags=Notification.FLAG_ONGOING_EVENT;
 
 
             //it.putExtra(KEY_COUNT, count);
@@ -173,10 +198,10 @@ private String httpResult="0";
              *********************/
             PendingIntent pi = PendingIntent.getActivity(this, 0, it, 0);
             //设置事件信息，显示在拉开的里面
-            n.setLatestEventInfo(NoticeService.this, "掌上审批系统",httpResult, pi);
+            n.setLatestEventInfo(NoticeService.this, "掌上审批系统", httpResult, pi);
             //发出通知
             //nm.cancel(1012);
             nm.notify(R.mipmap.mylogo, n);
-        }
+
     }
 }
