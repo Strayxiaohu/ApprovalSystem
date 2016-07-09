@@ -142,7 +142,7 @@
             android:layout_height="35dp"
             android:layout_marginTop="20dp"
             android:background="@drawable/login_button_backchange"
-            android:text="保   存"
+            android:text="登  录"
             android:textColor="#ffffff" />
 
         <ImageView

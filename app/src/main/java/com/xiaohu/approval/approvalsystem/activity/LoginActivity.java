@@ -47,9 +47,18 @@ public class LoginActivity extends Activity {
         btnSave = (Button) findViewById(R.id.login_button);
         checkBox = (CheckBox) findViewById(R.id.login_checkbox);
         checkBox.setChecked(true);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("PASSWORD", "true");
-        editor.commit();
+//        SharedPreferences.Editor editor = sharedPreferences.edit();
+//        editor.putString("PASSWORD", "true");
+//        editor.commit();
+        if(uname.equals("")&&upsw.equals("")){
+            editpsw.setEnabled(true);
+            edituser.setEnabled(true);
+            btnSave.setText("保  存");
+        }else{
+            editpsw.setEnabled(false);
+            edituser.setEnabled(false);
+            btnSave.setText("注  销");
+        }
         edituser.setText(uname);
         editpsw.setText(upsw);
     }
@@ -115,7 +124,7 @@ public class LoginActivity extends Activity {
             public void onClick(View v) {
                 String port = sharedPreferences.getString("PORT", "");
                 String ip = sharedPreferences.getString("IP", "");
-                if (btnSave.getText().equals("保   存")) {
+                if (btnSave.getText().equals("登  录")) {
 
 
                     if (port.equals("") || ip.equals("")) {
@@ -128,6 +137,7 @@ public class LoginActivity extends Activity {
                         httpUtils.HttpGet(LoginActivity.this, myHandler, url, true);
                     }
                 } else {
+                    btnSave.setText("登  录");
                     editpsw.setEnabled(true);
                     edituser.setEnabled(true);
                     editpsw.setText("");
@@ -136,6 +146,9 @@ public class LoginActivity extends Activity {
                     editor.putString("UserName", "");
                     editor.putString("UserPasswrod", "");
                     editor.commit();
+                    Intent intent = new Intent(LoginActivity.this, NoticeService.class);
+                    System.out.println("  关闭  service...");
+                    stopService(intent);
                 }
             }
         });

@@ -72,11 +72,9 @@ public class NoticeService extends Service {
                 super.handleMessage(msg);
                 System.out.println(msg.obj.toString() + "-----");
                 //显示通知
-
                 String strNum = msg.obj.toString();
                 //测试
                 httpResult = "未审批-" + strNum.substring(2) + "条";
-
                 AddNotification();
                 //结束
 //                if (strNum.contains("数量")) {
