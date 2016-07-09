@@ -44,7 +44,7 @@ public class NoticeService extends Service {
             msg.obj = 0;
             myHandler.sendMessage(msg);
             System.out.println("```````````2");
-            myHandler.postDelayed(myTasks, 60000);
+            myHandler.postDelayed(myTasks, 30000);
         }
     };
 

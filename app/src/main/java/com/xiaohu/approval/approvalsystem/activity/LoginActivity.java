@@ -53,7 +53,7 @@ public class LoginActivity extends Activity {
         if(uname.equals("")&&upsw.equals("")){
             editpsw.setEnabled(true);
             edituser.setEnabled(true);
-            btnSave.setText("保  存");
+            btnSave.setText("登  录");
         }else{
             editpsw.setEnabled(false);
             edituser.setEnabled(false);

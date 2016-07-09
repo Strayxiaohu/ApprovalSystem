@@ -12,9 +12,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
 import com.xiaohu.approval.approvalsystem.R;
-
 import java.util.Timer;
 import java.util.TimerTask;
 

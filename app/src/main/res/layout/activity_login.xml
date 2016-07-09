@@ -133,7 +133,7 @@
                 android:layout_height="30dp"
                 android:text="记住密码"
                 android:textColor="#ffffff"
-                android:visibility="gone"/>
+                android:visibility="gone" />
         </LinearLayout>
 
         <Button
@@ -151,6 +151,4 @@
             android:layout_marginTop="30dp"
             android:src="@mipmap/log_by" />
     </LinearLayout>
-
-
 </LinearLayout>
