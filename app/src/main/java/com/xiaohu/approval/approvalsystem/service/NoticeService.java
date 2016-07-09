@@ -25,7 +25,6 @@ import com.xiaohu.approval.approvalsystem.http.HttpUtils;
 public class NoticeService extends Service {
     private Handler myHandler = new Handler();
     private String httpResult = "0";
-
     /**
      * @param intent
      * @return
@@ -44,7 +43,7 @@ public class NoticeService extends Service {
             msg.obj = 0;
             myHandler.sendMessage(msg);
             System.out.println("```````````2");
-            myHandler.postDelayed(myTasks, 30000);
+            myHandler.postDelayed(myTasks, 20000);
         }
     };
 
